@@ -44,14 +44,21 @@ bot.on("message", (msg) => {
             },
         });
     } else if (["Low", "High"].includes(messageText)) {
-        bot.sendMessage(chatId, "One moment ...");
+        bot.sendMessage(chatId, "One moment ... ");
+        bot.sendMessage(
+            chatId,
+            `Downloading video in ${messageText} quality ...`
+        );
+
         mp4DownloadStream = ytdl(downloadLink, {
             filter: (format) => format.container === "mp4",
-            quality: messageText == "Low" ? "lowest" : "highest",
+            quality: messageText == "Low" ? "lowestvideo" : "highestvideo",
         });
+
         mp4FileStream = fs.createWriteStream(mp4DownloadPath);
         mp4DownloadStream.pipe(mp4FileStream);
         mp4DownloadStream.on("end", () => {
+            bot.sendMessage(chatId, "Downloading Sound ...");
             mp3DownloadPath = `./aidop_${videoId}.mp3`;
             mp3DownloadStream = ytdl(downloadLink, {
                 filter: (format) => format.container === "mp4",
@@ -61,6 +68,8 @@ bot.on("message", (msg) => {
             mp3DownloadStream.pipe(mp3FileStream);
             mp3DownloadStream.on("end", () => {
                 const mergedFilePath = `./merged_${videoId}.mp4`;
+                bot.sendMessage(chatId, "Merging video with sound ...");
+
                 const command = ffmpeg()
                     .input(mp4DownloadPath)
                     .input(mp3DownloadPath)
