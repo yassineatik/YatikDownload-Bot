@@ -1,4 +1,7 @@
 const TelegramBot = require("node-telegram-bot-api");
+const express = require("express");
+const app = express();
+
 require("dotenv").config();
 const token = process.env.TELEGRAM_TOKEN;
 const bot = new TelegramBot(token, { polling: true });
@@ -113,4 +116,9 @@ bot.on("message", (msg) => {
     } else {
         bot.sendMessage(chatId, "Please enter a valid youtube URL");
     }
+});
+
+const port = 3000;
+app.listen(port, () => {
+    console.log(`Telegram bot is running on port ${port}`);
 });
